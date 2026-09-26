@@ -123,12 +123,19 @@
   .foot > div{padding-bottom:clamp(30px,4vw,48px)}
   .dish-wrap{position:relative;align-self:end}
   .dish{position:relative;aspect-ratio:1/.78;overflow:hidden;background:transparent}
-  .dish img{width:100%;height:auto;-webkit-mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent);mask-image:linear-gradient(90deg,transparent,#000 14%,#000 86%,transparent)}
+  .dish img{width:100%;height:auto}
   .dish-wrap .pill{position:absolute;left:50%;top:40%;transform:translate(-50%,-50%)}
   .base{position:absolute;left:var(--gut);right:var(--gut);bottom:clamp(8px,1vw,14px);display:grid;grid-template-columns:1fr auto 1fr;font-size:clamp(8px,.8vw,11px);pointer-events:none}
   .base > *{pointer-events:auto}
   .base span:nth-child(2){color:var(--ink)}
   .base a{justify-self:end}
+  /* sticky call */
+  .sticky-call{position:fixed;z-index:20;left:50%;bottom:calc(14px + env(safe-area-inset-bottom,0px));transform:translate(-50%,0);display:flex;align-items:center;gap:.6em;background:var(--red);color:var(--white);border-radius:999px;padding:14px 26px;font:600 14px/1 Montserrat,"Helvetica Neue",Arial,sans-serif;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap;box-shadow:0 8px 24px rgba(0,0,0,.28);transition:transform .3s,opacity .3s}
+  .sticky-call svg{width:16px;height:16px}
+  .sticky-call small{font-weight:500;opacity:.85;letter-spacing:.02em}
+  .sticky-call.is-hidden{opacity:0;transform:translate(-50%,120%);pointer-events:none}
+  .sticky-call:hover{background:var(--ink)}
+  @media (min-width:900px){.sticky-call{left:auto;right:28px;bottom:28px;transform:none}.sticky-call.is-hidden{transform:translateY(120%)}}
   .strip{--s:12px;height:6px}
 </style>
 </head>
@@ -249,12 +256,11 @@
         <h3>Contact</h3>
         <p><a href="tel:+61467836921">0467 836 921</a></p>
         <p><a href="https://www.instagram.com/bolla.italian/" target="_blank" rel="noreferrer">@bolla.italian</a></p>
-        <p>Murwillumbah NSW 2484</p>
-        <address>13 Wharf Street</address>
+        <address>13 Wharf Street<br>Murwillumbah NSW 2484</address>
       </div>
       <div class="dish-wrap">
         <figure class="dish" style="margin:0">
-          <img src="assets/wine.jpg" alt="A glass of red wine with a sprig of basil, from above" width="900" height="984" loading="lazy">
+          <img src="assets/wine.webp" alt="A glass of red wine with a sprig of basil, from above" width="720" height="787" loading="lazy">
         </figure>
         <a class="pill cta" href="tel:+61467836921">Call to order</a>
       </div>
@@ -274,6 +280,7 @@
 </footer>
 <div class="strip ck" aria-hidden="true"></div>
 
+<a class="sticky-call is-hidden" id="sticky-call" href="tel:+61467836921" aria-label="Call Bolla to order on 0467 836 921"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z"/></svg>Call to order <small>0467 836 921</small></a>
 <script>
   (function(){
     var btn=document.getElementById('menu-toggle');
@@ -282,6 +289,15 @@
     function sync(){btn.textContent=allOpen()?'Close the menu':'Discover our menu'}
     btn.addEventListener('click',function(){var o=!allOpen();rows.forEach(function(r){r.open=o});sync();if(o)document.getElementById('menu').scrollIntoView()});
     rows.forEach(function(r){r.addEventListener('toggle',sync)});
+  })();
+
+  (function(){
+    var s=document.getElementById('sticky-call');var hero=document.querySelector('.hero');var foot=document.querySelector('.dish-wrap');
+    if(!('IntersectionObserver' in window)){s.classList.remove('is-hidden');return}
+    var vis={hero:true,foot:false};
+    function upd(){s.classList.toggle('is-hidden',vis.hero||vis.foot)}
+    new IntersectionObserver(function(e){vis.hero=e[0].isIntersecting;upd()},{threshold:0.35}).observe(hero);
+    new IntersectionObserver(function(e){vis.foot=e[0].isIntersecting;upd()},{threshold:0.5}).observe(foot);
   })();
 </script>
 
